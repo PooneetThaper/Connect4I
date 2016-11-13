@@ -1,4 +1,5 @@
 import numpy as np
+import csv
 
 def nonlin(x, deriv=False):
     if(deriv==True):
@@ -11,65 +12,106 @@ colTracker = []
 players=[]
 
 def addPiece(column, p):
-    count=0
-    winner=0
-    if(colTracker[column]<0):
-        winner=p*-1
-        return winner
-    else:
-        board[colTracker[column]][column]=p
-        colTracker[column]-=1
-        for i in range(0,6): # check column win
-    		if((count > 0) and (board[i][column] != p)): # reset counter if not consecutive
-    			count = 0
-    		if(board[i][column] == p):
-    			count += 1
+	count=0
+	winner=0
+	if(colTracker[column]<0): # LOSE CONDITION MET
+		winner=p*-1
+		#print winner
+		return winner
+	else: # ADD PIECE TO COLUMN
+		board[colTracker[column]][column]=p
 
-    		if count == 4: # WIN CONDITION MET
-    			winner = p
-    			return winner
-    	count = 0 # reset
-    	return winner
-        #Win Check
-    '''
-	count = 0
-	for i in range(5,-1,-1): # iterate rows to add piece
-
-		if(board[i][column] == 0): # checking for empty row to place
-			board[i][column] = p
-
-			for j in range(0, 7): # check row win
-				if((count > 0) and (board[i][j] != p)): # reset counter if not consecutive
-					count = 0
-				if(board[i][j] == p):
-					count += 1
+		for j in range(0, 7): # check row win
+			if((count > 0) and (board[colTracker[column]][j] != p)): # reset counter if not consecutive
+				count = 0
+			if(board[colTracker[column]][j] == p):
+				count += 1
 
 				if(count == 4): # WIN CONDITION MET
 					winner = p
-					print winner,' won'
-					return
-			break
-		elif(i == 0): # LOSE CONDITION MET
-			winner = -1*p
-			return
-	count = 0 # reset
-	# check win conditions
-	for i in range(0,6): # check column win
-		if((count > 0) and (board[i][column] != p)): # reset counter if not consecutive
-			count = 0
-		if(board[i][column] == p):
-			count += 1
+					return winner
+		count = 0 # reset
 
-		if count == 4: # WIN CONDITION MET
-			winner = p
-			print winner,' won'
-			return
-	count = 0 # reset
-	return
-    '''
+		# check diagonal win
+		# diagonal L down to R
+		# left half
+		i = colTracker[column]
+		#print i
+		j = column
+		#print j
+		while((i > 0) and (j > 0)):
+			if(board[i][j] == p):
+				count += 1
+			else:
+				if(count > 0):
+					count = 0
+			if(count == 4): # WIN CONDITION MET
+				winner = p
+				return winner
+			i -= 1
+			j -= 1
+		# right half
+		i = colTracker[column]
+		j = column
+		while((i < 5) and (j < 6)):
+			if(board[i][j] == p):
+				count += 1
+			else:
+				if(count > 0):
+					count = 0
+			if(count == 4): # WIN CONDITION MET
+				winner = p
+				return winner
+			i += 1
+			j += 1
+		count = 0
+		# diagonal R down to L
+		# left half
+		i = colTracker[column]
+		j = column
+		while((i < 5) and (j > 0)):
+			if(board[i][j] == p):
+				count += 1
+			else:
+				if(count > 0):
+					count = 0
+			if(count == 4): # WIN CONDITION MET
+				winner = p
+				return winner
+			i += 1
+			j -= 1
+		# right half
+		i = colTracker[column]
+		j = column
+		while((i > 0) and (j < 6)):
+			if(board[i][j] == p):
+				count += 1
+			else:
+				if(count > 0):
+					count = 0
+			if(count == 4): # WIN CONDITION MET
+				winner = p
+				return winner
+			i -= 1
+			j += 1
+		colTracker[column]-=1
 
-def runPlayer(playerNum):
-    out=(nonlin(np.dot(flatten(6,7,board), players[playerNum])))
+		for i in range(0,6): # check column win
+			if((count > 0) and (board[i][column] != p)): # reset counter if not consecutive
+				count = 0
+			if(board[i][column] == p):
+				count += 1
+
+			if count == 4: # WIN CONDITION MET
+				winner = p
+				return winner
+		count = 0 # reset
+
+		#print 'Current Winner ',winner
+		return winner
+
+def runPlayer(playerNum,playerVal):
+    out=(nonlin(np.dot(flatten(6,7,board,playerVal), players[playerNum])))
     m=out[0]
     index=0
     for x in range(1,7):
@@ -79,26 +121,47 @@ def runPlayer(playerNum):
     return index
 
 def play(playerA,playerB):
+    reset()
     player=1
     w=0
+    out=-1
     while(w==0):
         #for p in range(6):
-        	#print board[p]
+        #	print board[p][0],"\t",board[p][1],"\t",board[p][2],"\t",board[p][3],"\t",board[p][4],"\t",board[p][5],"\t",board[p][6]
+        #print "\n"
         if(player==1):
-            w=addPiece(runPlayer(playerA), player)
+            w=addPiece(runPlayer(playerA,1), player)
         else:
-            w=addPiece(runPlayer(playerA), player)
+            w=addPiece(runPlayer(playerA,-1), player)
     	player *= -1
 
+
     if(w==1):
-        return playerA
+        out=playerA
     else:
-        return playerB
+        out=playerB
+
+    #print out,"won"
+
+    return out
 
 def run():
-    for x in range(200):
+    for x in range(10000):
         k=tournament()
         gen(k[0],k[1])
+        if (x%1000==0):
+            print(x)
+        if(x%10000==9999):
+            with open("out2.csv","w") as f:
+                spamwriter = csv.writer(f, delimiter=',',
+                                    quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                for b in range(42):
+                    out =[]
+                    for c in range(7):
+                        out.append(str(players[0][b][c]))
+                    spamwriter.writerow(out)
+    print('done')
+
 
 def gen(playerA,playerB):
         p=players[:]
@@ -112,7 +175,7 @@ def gen(playerA,playerB):
     		if(a[l] > 0.5):
     			temp = d[2][l]
     			d[2][l] = d[3][l]
-    			d[3][l] = temp*np.random.random(1)[0]*2
+    			d[3][l] = temp*(np.random.random(1)[0]/5 +0.9)
         for l in range(len(d)):
             d.append(d[l][:])
         for j in range(2):
@@ -121,12 +184,9 @@ def gen(playerA,playerB):
     			if(a[l] > 0.5):
     				temp = d[len(d)/2+j][l]
     				d[len(d)/2+j][l]=d[len(d)-j-1][l]
-    				d[len(d)-j-1][l]=temp
+    				d[len(d)-j-1][l]=temp*(np.random.random(1)[0]/5 +0.9)
         for l in range(len(players)):
             players[l]=deflatten(42,7,d[l])
-        if d==p:
-            print "wat"
-        print 'k'
 
 def deflatten(x,y,arr):
     out=[]
@@ -137,11 +197,11 @@ def deflatten(x,y,arr):
         out.append(o)
     return out
 
-def flatten(x,y,arr):
+def flatten(x,y,arr,pval=1):
     out=[]
     for a in range(x):
         for b in range(y):
-            out.append(arr[a][b])
+            out.append(pval*arr[a][b])
     return out
 
 def tournament():
@@ -154,8 +214,15 @@ def tournament():
         for k in range(len(contestants)/2):
             winners.append(play(contestants[k], contestants[len(contestants)-k-1]))
         contestants=winners
-    print winners
+    #print winners
     return winners
+
+def reset():
+    for i in range(7):
+        colTracker[i]=5
+    for row in range(6):
+        for col in range(7):
+            board[row][col]=0
 
 def init():
     numIn=42
@@ -168,8 +235,17 @@ def init():
     		board[i].append(0)
     for i in range(7):
         colTracker.append(5)
-    for k in range(numPlayers):
+    for k in range(numPlayers-1):
         players.append(2*np.random.random((numIn,numOut))-1)
+    last=[]
+    with open("out2.csv","r") as f:
+        spamreader = csv.reader(f, delimiter=',', quotechar='|')
+        for row in spamreader:
+            r=[]
+            for item in row:
+                r.append(float(item))
+            last.append(r)
+    players.append(last)
 
 if __name__ == '__main__':
     init()
