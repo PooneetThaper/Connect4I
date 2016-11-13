@@ -146,13 +146,14 @@ def play(playerA,playerB):
     return out
 
 def run():
-    for x in range(300000):
+
+    for x in range(10000):
         k=tournament()
         gen(k[0],k[1])
         if (x%1000==0):
             print(x)
-        if(x%10000==9999):
-            with open("out2.csv","w") as f:
+        if(x%10000==1):
+            with open("out2.csv","w+") as f:
                 spamwriter = csv.writer(f, delimiter=',',
                                     quotechar='|', quoting=csv.QUOTE_MINIMAL)
                 for b in range(42):
@@ -160,6 +161,8 @@ def run():
                     for c in range(7):
                         out.append(str(players[0][b][c]))
                     spamwriter.writerow(out)
+
+    demo(7,7)
     print('done')
 
 
@@ -224,11 +227,33 @@ def reset():
         for col in range(7):
             board[row][col]=0
 
+def demo(playerA,playerB):
+    reset()
+    player=1
+    w=0
+    out=-1
+    while(w==0):
+        for p in range(6):
+        	print board[p][0],"\t",board[p][1],"\t",board[p][2],"\t",board[p][3],"\t",board[p][4],"\t",board[p][5],"\t",board[p][6]
+        print "\n"
+        if(player==1):
+            w=addPiece(runPlayer(playerA,1), player)
+        else:
+            w=addPiece(runPlayer(playerA,-1), player)
+    	player *= -1
+
+    for p in range(6):
+        print board[p][0],"\t",board[p][1],"\t",board[p][2],"\t",board[p][3],"\t",board[p][4],"\t",board[p][5],"\t",board[p][6]
+
+    if(w==1):
+        print "playerA won"
+    else:
+        print "playerB won"
+
 def init():
     numIn=42
     numOut=7
     numPlayers=8
-    #np.random.seed(0)
     for i in range(0,6): # rows
     	board.append([])
     	for j in range(0,7): # columns
