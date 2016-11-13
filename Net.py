@@ -146,7 +146,7 @@ def play(playerA,playerB):
     return out
 
 def run():
-    for x in range(10000):
+    for x in range(300000):
         k=tournament()
         gen(k[0],k[1])
         if (x%1000==0):
