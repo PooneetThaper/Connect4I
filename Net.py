@@ -15,7 +15,6 @@ def addPiece(column, p):
     winner=0
     if(colTracker[column]<0):
         winner=p*-1
-        print winner
         return winner
     else:
         board[colTracker[column]][column]=p
@@ -28,10 +27,8 @@ def addPiece(column, p):
 
     		if count == 4: # WIN CONDITION MET
     			winner = p
-    			print winner,' won'
     			return winner
     	count = 0 # reset
-        print winner
     	return winner
         #Win Check
     '''
@@ -85,8 +82,8 @@ def play(playerA,playerB):
     player=1
     w=0
     while(w==0):
-        for p in range(6):
-        	print board[p]
+        #for p in range(6):
+        	#print board[p]
         if(player==1):
             w=addPiece(runPlayer(playerA), player)
         else:
@@ -97,6 +94,29 @@ def play(playerA,playerB):
         return playerA
     else:
         return playerB
+
+def run():
+    tournament()
+
+
+def flatten(x,y,arr):
+    out=[]
+    for a in range(x):
+        for b in range(y):
+            out.append(board[a][b])
+    return out
+
+def tournament():
+    contestants=[]
+    for k in range(len(players)):
+        contestants.append(k)
+    winners = []
+    while (len(contestants)>2):
+        winners = []
+        for k in range(len(contestants)/2):
+            winners.append(play(contestants[k], contestants[len(contestants)-k-1]))
+        contestants=winners
+    return winners
 
 def init():
     numIn=42
@@ -112,21 +132,6 @@ def init():
     for k in range(numPlayers):
         players.append(2*np.random.random((numIn,numOut))-1)
 
-    tournament()
-
-
-def flatten(x,y,arr):
-    out=[]
-    for a in range(x):
-        for b in range(y):
-            out.append(board[a][b])
-    return out
-
-def tournament():
-    winners = []
-    for k in range(len(players)/2):
-        winners.append(play(k, len(players)-k-1))
-    print(winners)
-
 if __name__ == '__main__':
     init()
+    run()
