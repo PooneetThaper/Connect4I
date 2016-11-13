@@ -111,7 +111,8 @@ def init():
         colTracker.append(5)
     for k in range(numPlayers):
         players.append(2*np.random.random((numIn,numOut))-1)
-    print play(1,7),"won"
+
+    tournament()
 
 
 def flatten(x,y,arr):
@@ -120,6 +121,12 @@ def flatten(x,y,arr):
         for b in range(y):
             out.append(board[a][b])
     return out
+
+def tournament():
+    winners = []
+    for k in range(len(players)/2):
+        winners.append(play(k, len(players)-k-1))
+    print(winners)
 
 if __name__ == '__main__':
     init()

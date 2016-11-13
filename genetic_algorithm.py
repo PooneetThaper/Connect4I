@@ -24,6 +24,16 @@ def main():
 
 	print(players)
 
+	x = len(players)
+	while(x != 2):
+		for n in range(x/2):
+			if(p1[n] == 1): #win
+				p1[len(p1)-n] == 0 #corresponding loss
+			elif(p1[n] == 0): #loss
+				p1[len(p1)-n] == 1 #corresponding win
+		x = x/2
+
+
 
 if __name__ == '__main__':
 	main()
