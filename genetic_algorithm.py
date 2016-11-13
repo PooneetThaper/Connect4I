@@ -1,39 +1,35 @@
 import numpy as np
 
 def main():
-	players = []
-
-	p1 = [0.5, 0.25, 0.1]
-	p2 = [0.3, 0.6, 0.9]
-
-	players.append(p1[:])
-	players.append(p2[:])
-
-
-	a = np.random.random(len(p1))
-	print(a)
-
-	for k in range(len(p1)):
-		if(a[k] > 0.5):
-			temp = p1[k]
-			p1[k] = p2[k] 
-			p2[k] = temp
-
-	players.append(p1[:])
-	players.append(p2[:])
-
-	print(players)
-
-	x = len(players)
-	while(x != 2):
-		for n in range(x/2):
-			if(p1[n] == 1): #win
-				p1[len(p1)-n] == 0 #corresponding loss
-			elif(p1[n] == 0): #loss
-				p1[len(p1)-n] == 1 #corresponding win
-		x = x/2
+	np.random.seed(2)
+	d = []
+	d.append([0.5, 0.25, 0.1])
+	d.append([0.3, 0.6, 0.9])
+	d.append(d[0][:])
+	d.append(d[1][:])
+	a = np.random.random(len(d[0]))
+	print a
+	for l in range(len(d[0])):
+		if(a[l] > 0.3):
+			temp = d[2][l]
+			d[2][l] = d[3][l]
+			d[3][l] = temp
+	for l in range(len(d)):
+		d.append(d[l][:])
+	for j in range(2):
+		a = np.random.random(len(d[0]))
+		print a
+		for l in range(len(d[0])):
+			if(a[l] > 0.3):
+				temp = d[len(d)/2+j][l]
+				d[len(d)/2+j][l]=d[len(d)-j-1][l]
+				d[len(d)-j-1][l]=temp
+			elif(a[l] > 0.5):
+				print "hi"
+	print d
 
 
+	print np.random.random(1)[0]
 
 if __name__ == '__main__':
 	main()

@@ -96,14 +96,52 @@ def play(playerA,playerB):
         return playerB
 
 def run():
-    tournament()
+    for x in range(200):
+        k=tournament()
+        gen(k[0],k[1])
 
+def gen(playerA,playerB):
+        p=players[:]
+    	d = []
+    	d.append(flatten(42,7,players[playerA]))
+    	d.append(flatten(42,7,players[playerB]))
+        d.append(d[0][:])
+        d.append(d[1][:])
+    	a = np.random.random(len(d[0]))
+    	for l in range(len(d[0])):
+    		if(a[l] > 0.5):
+    			temp = d[2][l]
+    			d[2][l] = d[3][l]
+    			d[3][l] = temp*np.random.random(1)[0]*2
+        for l in range(len(d)):
+            d.append(d[l][:])
+        for j in range(2):
+    		a = np.random.random(len(d[0]))
+    		for l in range(len(d[0])):
+    			if(a[l] > 0.5):
+    				temp = d[len(d)/2+j][l]
+    				d[len(d)/2+j][l]=d[len(d)-j-1][l]
+    				d[len(d)-j-1][l]=temp
+        for l in range(len(players)):
+            players[l]=deflatten(42,7,d[l])
+        if d==p:
+            print "wat"
+        print 'k'
+
+def deflatten(x,y,arr):
+    out=[]
+    for a in range(x):
+        o=[]
+        for b in range(y):
+            o.append(arr[(a*y)+b])
+        out.append(o)
+    return out
 
 def flatten(x,y,arr):
     out=[]
     for a in range(x):
         for b in range(y):
-            out.append(board[a][b])
+            out.append(arr[a][b])
     return out
 
 def tournament():
@@ -116,13 +154,14 @@ def tournament():
         for k in range(len(contestants)/2):
             winners.append(play(contestants[k], contestants[len(contestants)-k-1]))
         contestants=winners
+    print winners
     return winners
 
 def init():
     numIn=42
     numOut=7
     numPlayers=8
-    np.random.seed(0)
+    #np.random.seed(0)
     for i in range(0,6): # rows
     	board.append([])
     	for j in range(0,7): # columns
