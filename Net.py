@@ -1,5 +1,6 @@
 import numpy as np
 import csv
+import time
 
 def nonlin(x, deriv=False):
     if(deriv==True):
@@ -146,13 +147,12 @@ def play(playerA,playerB):
     return out
 
 def run():
-
-    for x in range(10000):
+    for x in range(100):
         k=tournament()
         gen(k[0],k[1])
         if (x%1000==0):
             print(x)
-        if(x%10000==1):
+        if(x%1000==999):
             with open("out2.csv","w+") as f:
                 spamwriter = csv.writer(f, delimiter=',',
                                     quotechar='|', quoting=csv.QUOTE_MINIMAL)
@@ -161,7 +161,6 @@ def run():
                     for c in range(7):
                         out.append(str(players[0][b][c]))
                     spamwriter.writerow(out)
-
     demo(7,7)
     print('done')
 
@@ -233,14 +232,24 @@ def demo(playerA,playerB):
     w=0
     out=-1
     while(w==0):
+        for p in range(1,8):
+            out=[]
+
         for p in range(6):
         	print board[p][0],"\t",board[p][1],"\t",board[p][2],"\t",board[p][3],"\t",board[p][4],"\t",board[p][5],"\t",board[p][6]
+        time.sleep(1)
         print "\n"
         if(player==1):
             w=addPiece(runPlayer(playerA,1), player)
         else:
-            w=addPiece(runPlayer(playerA,-1), player)
+
+            print "Choose your column (1-7)"
+            r=raw_input()
+            w=addPiece(int(r)-1, player)
+
+            #w=addPiece(runPlayer(playerB,-1), player)
     	player *= -1
+
 
     for p in range(6):
         print board[p][0],"\t",board[p][1],"\t",board[p][2],"\t",board[p][3],"\t",board[p][4],"\t",board[p][5],"\t",board[p][6]
