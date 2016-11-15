@@ -152,7 +152,7 @@ def run():
         gen(k[0],k[1])
         if (x%1000==0):
             print(x)
-        if(x%100000==999):
+        if(x%10000==1):
             with open("out2.csv","w+") as f:
                 spamwriter = csv.writer(f, delimiter=',',
                                     quotechar='|', quoting=csv.QUOTE_MINIMAL)
