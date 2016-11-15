@@ -147,12 +147,12 @@ def play(playerA,playerB):
     return out
 
 def run():
-    for x in range(100):
+    for x in range(10000000):
         k=tournament()
         gen(k[0],k[1])
         if (x%1000==0):
             print(x)
-        if(x%1000==999):
+        if(x%100000==999):
             with open("out2.csv","w+") as f:
                 spamwriter = csv.writer(f, delimiter=',',
                                     quotechar='|', quoting=csv.QUOTE_MINIMAL)
@@ -161,12 +161,13 @@ def run():
                     for c in range(7):
                         out.append(str(players[0][b][c]))
                     spamwriter.writerow(out)
+            for row in players[0]:
+        	finalout=[]
+                for x in row:
+                    finalout.append(str(x))
+                print "\t".join(finalout)
     #demo(7,7)
-    for row in players[0]:
-	finalout=[]
-        for x in row:
-            finalout.append(str(x))
-        print "\t".join(finalout)
+
     print('done')
 
 
