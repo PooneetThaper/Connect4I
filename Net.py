@@ -147,7 +147,7 @@ def play(playerA,playerB):
     return out
 
 def run():
-    for x in range(10000000):
+    for x in range(100):
         k=tournament()
         gen(k[0],k[1])
         if (x%1000==0):
@@ -161,7 +161,12 @@ def run():
                     for c in range(7):
                         out.append(str(players[0][b][c]))
                     spamwriter.writerow(out)
-    demo(7,7)
+    #demo(7,7)
+    for row in players[0]:
+	finalout=[]
+        for x in row:
+            finalout.append(str(x))
+        print "\t".join(finalout)
     print('done')
 
 
