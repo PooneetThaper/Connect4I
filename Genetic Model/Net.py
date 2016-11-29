@@ -113,6 +113,7 @@ def addPiece(column, p):
 
 def runPlayer(playerNum,playerVal):
     out=(nonlin(np.dot(flatten(6,7,board,playerVal), players[playerNum])))
+    print out
     m=out[0]
     index=0
     for x in range(1,7):
@@ -146,13 +147,13 @@ def play(playerA,playerB):
 
     return out
 
-def run():
+def train():
     for x in range(10000000):
         k=tournament()
         gen(k[0],k[1])
         if (x%1000==0):
             print(x)
-        if(x%10000==1):
+        if(x%100000==999):
             with open("out2.csv","w+") as f:
                 spamwriter = csv.writer(f, delimiter=',',
                                     quotechar='|', quoting=csv.QUOTE_MINIMAL)
@@ -166,8 +167,10 @@ def run():
                 for x in row:
                     finalout.append(str(x))
                 print "\t".join(finalout)
-    #demo(7,7)
 
+def run():
+    #train()
+    demo(7,7)
     print('done')
 
 
