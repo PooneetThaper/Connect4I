@@ -1,2 +1,2 @@
 # Connect4I
-An implemenation of neural networks and genetic algorithm ideas to create a skilled Connect4 AI.
+An implemenation of neural networks and genetic algorithm ideas to create a skilled Connect4 player. This project was created during the course of Hack RPI and is being improved upon incrementally. Currently, I am trying to apply the minimax algorithm to map the gamespace of Connect4 and evaluate the best move at each point. Then, I hope to used supervised learning to train a model to recognize the best move. This will allow the same level of skill with much lower computational requirements.
