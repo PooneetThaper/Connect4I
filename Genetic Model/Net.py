@@ -112,8 +112,11 @@ def addPiece(column, p):
 		return winner
 
 def runPlayer(playerNum,playerVal):
-    out=(nonlin(np.dot(flatten(6,7,board,playerVal), players[playerNum])))
-    print out
+    currentPlayer=players[playerNum];
+    out1=(nonlin(np.dot(flatten(6,7,board,playerVal), currentPlayer[0])))
+    out2=(nonlin(np.dot(out1,currentPlayer[1])))
+    out=(nonlin(np.dot(out2,currentPlayer[2])))
+    #print out
     m=out[0]
     index=0
     for x in range(1,7):
@@ -148,37 +151,29 @@ def play(playerA,playerB):
     return out
 
 def train():
-    for x in range(10000000):
+    for x in range(1000000):
         k=tournament()
         gen(k[0],k[1])
-        if (x%1000==0):
+        if (x%100==0):
             print(x)
-        if(x%100000==999):
+        if(x%1000==999):
+            out=flattenPlayer(0)
+            csvOut=[]
+            for i in range(len(out)):
+                csvOut.append(str(out[i]))
             with open("out2.csv","w+") as f:
                 spamwriter = csv.writer(f, delimiter=',',
                                     quotechar='|', quoting=csv.QUOTE_MINIMAL)
-                for b in range(42):
-                    out =[]
-                    for c in range(7):
-                        out.append(str(players[0][b][c]))
-                    spamwriter.writerow(out)
-            for row in players[0]:
-        	finalout=[]
-                for x in row:
-                    finalout.append(str(x))
-                print "\t".join(finalout)
 
-def run():
-    #train()
-    demo(7,7)
-    print('done')
+                spamwriter.writerow(csvOut)
+            for row in players[0]:
+                print "\t".join(csvOut)
 
 
 def gen(playerA,playerB):
-        p=players[:]
     	d = []
-    	d.append(flatten(42,7,players[playerA]))
-    	d.append(flatten(42,7,players[playerB]))
+    	d.append(flattenPlayer(playerA))
+    	d.append(flattenPlayer(playerB))
         d.append(d[0][:])
         d.append(d[1][:])
     	a = np.random.random(len(d[0]))
@@ -187,6 +182,7 @@ def gen(playerA,playerB):
     			temp = d[2][l]
     			d[2][l] = d[3][l]
     			d[3][l] = temp*(np.random.random(1)[0]/5 +0.9)
+                #temp is multiplied by a number between 0.9 and 1.1 for randomness
         for l in range(len(d)):
             d.append(d[l][:])
         for j in range(2):
@@ -196,8 +192,45 @@ def gen(playerA,playerB):
     				temp = d[len(d)/2+j][l]
     				d[len(d)/2+j][l]=d[len(d)-j-1][l]
     				d[len(d)-j-1][l]=temp*(np.random.random(1)[0]/5 +0.9)
+                    #temp is multiplied by a number between 0.9 and 1.1 for randomness
         for l in range(len(players)):
-            players[l]=deflatten(42,7,d[l])
+            players[l]=deflattenPlayer(d[l])
+
+def flattenPlayer(playerNum):
+    input=[]
+    curr=flatten(42,20,players[playerNum][0])
+    for k in curr:
+        input.append(k)
+    curr=flatten(20,20,players[playerNum][1])
+    for k in curr:
+        input.append(k)
+    curr=flatten(20,7,players[playerNum][1])
+    for k in curr:
+        input.append(k)
+    return input
+
+def deflattenPlayer(arr):
+    out=[]
+
+    temp=[]
+    for i in range(840):
+        temp.append(arr[i])
+    curr=deflatten(42,20,temp)
+    out.append(curr)
+
+    temp=[]
+    for i in range(840,1240):
+        temp.append(arr[i])
+    curr=deflatten(20,20,temp)
+    out.append(curr)
+
+    temp=[]
+    for i in range(1240,1380):
+        temp.append(arr[i])
+    curr=deflatten(20,7,temp)
+    out.append(curr)
+
+    return out;
 
 def deflatten(x,y,arr):
     out=[]
@@ -268,6 +301,11 @@ def demo(playerA,playerB):
     else:
         print "playerB won"
 
+def run():
+    train()
+    #demo(7,7)
+    print('done')
+
 def init():
     numIn=42
     numOut=7
@@ -278,17 +316,21 @@ def init():
     		board[i].append(0)
     for i in range(7):
         colTracker.append(5)
-    for k in range(numPlayers-1):
-        players.append(2*np.random.random((numIn,numOut))-1)
-    last=[]
+    for k in range(numPlayers-1):# Use numPlayers-1 when loading from csv
+        p=[]
+        p.append(2*np.random.random((numIn,20))-1)
+        p.append(2*np.random.random((20,20))-1)
+        p.append(2*np.random.random((20,numOut))-1)
+
+        players.append(p);
+    r=[]
     with open("out2.csv","r") as f:
         spamreader = csv.reader(f, delimiter=',', quotechar='|')
         for row in spamreader:
-            r=[]
             for item in row:
                 r.append(float(item))
-            last.append(r)
-    players.append(last)
+    players.append(deflattenPlayer(r))
+
 
 if __name__ == '__main__':
     init()
