@@ -208,12 +208,66 @@ int best_move(vector<int> a){
       }
     }
   }
+  cout<< best << "\n\n";
   return best;
 }
 
+void printBoard(vector<int> board){
+  for(int i=0;i<3;i++){
+    for(int j=0;j<3;j++){
+      cout<< board[i*3 + j] << "\t";
+    }
+    cout<<"\n\n";
+  }
+}
+
+vector<int> reverseBoard(vector<int> board){
+  for(int i=0;i<9;i++){
+    board[i]=board[i]*-1;
+  }
+  return board;
+}
+
+void makeMove(vector<int>& board, int playerNum, int move){
+  board[move]=playerNum;
+}
+
+//copied from try 3 to find completion
+bool over(vector<int> board){
+  //Return value returns bool for whether or not this is an end state and a score
+  //Diagonal win check
+  if ((board[0]==board[8] && board[0]==board[4]) || (board[2]==board[6] && board[2]==board[4])){
+    if (board[4]==1) return true;
+    if (board[4]==-1) return true;
+  }
+  //Horizontal win check
+  for(int n=0;n<9;n=n+3){
+    if (board[n]==board[n+1] && board[n+1]==board[n+2]){
+      if (board[n]==1) return true;
+      if (board[n]==-1) return true;
+    }
+  }
+  //Vertical win check
+  for(int n=0;n<3;n=n+1){
+    if (board[n]==board[n+3] && board[n+3]==board[n+6]){
+      if (board[n]==1) return true;
+      if (board[n]==-1) return true;
+    }
+  }
+  //No win found (can either be a draw or a nonterminal state)
+  for(int i=0;i<9;i++){
+    if (board[i]==0) return false;
+    //Game still playable
+  }
+  //Draw (all other cases exhausted)
+  return true;
+}
+
 int main(){
+  //set to play against self
+  bool againstSelf=true;
   vector<int> a;
-  a.push_back(-1);
+  //written out for debugging to plug in starting state
   a.push_back(0);
   a.push_back(0);
   a.push_back(0);
@@ -222,5 +276,24 @@ int main(){
   a.push_back(0);
   a.push_back(0);
   a.push_back(0);
-  cout<<best_move(a)<<"\n";
+  a.push_back(0);
+
+  printBoard(a);
+
+  for(int player=1;!over(a);player=player*-1){
+    if (player==1) {
+      makeMove(a,1,best_move(a));
+    }else{
+      if(againstSelf){
+        makeMove(a,-1,best_move(reverseBoard(a)));
+      }else{
+        cout<< "Pick your move (0-8):\n";
+        int move;
+        cin >> move;
+        makeMove(a,-1,move);
+      }
+
+    }
+    printBoard(a);
+  }
 }
