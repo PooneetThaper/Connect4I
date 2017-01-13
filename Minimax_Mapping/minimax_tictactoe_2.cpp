@@ -213,7 +213,7 @@ int best_move(vector<int> a){
 
 int main(){
   vector<int> a;
-  a.push_back(0);
+  a.push_back(-1);
   a.push_back(0);
   a.push_back(0);
   a.push_back(0);
