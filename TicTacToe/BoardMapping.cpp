@@ -142,7 +142,7 @@ void SortAndSave(){
   cout << "Nonterminal: "<< nonterminalBoards.size() <<"\n";
   cout << "Terminal: "<< terminalBoards.size() <<"\n";
 
-  ofstream a ("nonterminalBoards.txt");
+  ofstream a ("OutputFiles/nonterminalBoards.txt");
   if (a.is_open()){
     for (size_t i = 0; i < nonterminalBoards.size(); i++) {
       a << nonterminalBoards[i] << "\n";
@@ -150,7 +150,7 @@ void SortAndSave(){
     a.close();
   }
 
-  ofstream b ("terminalBoards.txt");
+  ofstream b ("OutputFiles/terminalBoards.txt");
   if (b.is_open()){
     for (size_t i = 0; i < terminalBoards.size(); i++) {
       b << terminalBoards[i] << "\n";

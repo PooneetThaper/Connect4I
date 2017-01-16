@@ -321,7 +321,7 @@ int main(){
   }else{
     vector<pair<int,int> > codedBoards;
     string line;
-    ifstream boardList ("nonterminalBoards.txt");
+    ifstream boardList ("OutputFiles/nonterminalBoards.txt");
     if (boardList.is_open()){
       while(getline(boardList,line)){
          codedBoards.push_back(pair<int,int>(stoi(line),0));
@@ -337,7 +337,7 @@ int main(){
       codedBoards[i].second = best_move(decodeBase3(codedBoards[i].first));
     }
 
-    ofstream labeledOutput ("bestMoves.txt");
+    ofstream labeledOutput ("OutputFiles/bestMoves.txt");
     if (labeledOutput.is_open()){
       for (int i = 0; i < num; i++) {
         labeledOutput << codedBoards[i].first << ":" << codedBoards[i].second << "\n";
