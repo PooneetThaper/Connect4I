@@ -1,13 +1,16 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <string>
+#include <utility>
+
 using namespace std;
 
-double winAnalysis(vector<int> board,int move);
-double contemplateMax(vector<int> board,int move);
-double contemplateMin(vector<int> board,int move);
+double winAnalysis(const vector<int>& board,const int& move);
+double contemplateMax(vector<int> board,const int& move);
+double contemplateMin(vector<int> board,const int& move);
 
-
-double winAnalysis(vector<int> board,int id){
+double winAnalysis(const vector<int>& board,const int& id){
   double good=2;
   double bad=2;
   int count=0;
@@ -123,7 +126,7 @@ double winAnalysis(vector<int> board,int id){
 }
 
 
-double contemplateMax(vector<int> board, int move){
+double contemplateMax(vector<int> board, const int& move){
   if(board[move]!=0) return -2;
   board[move]=-1;
   double winstat=winAnalysis(board,-1);
@@ -159,7 +162,7 @@ double contemplateMax(vector<int> board, int move){
   }else return winstat*-1;
 }
 
-double contemplateMin(vector<int> board,int move){
+double contemplateMin(vector<int> board,const int& move){
   if(board[move]!=0) return -2;
   board[move]=1;
   double winstat=winAnalysis(board,1);
@@ -195,24 +198,24 @@ double contemplateMin(vector<int> board,int move){
   }else return winstat;
 }
 
-int best_move(vector<int> a){
+int best_move(const vector<int>& a, bool show=false){
   double max=-1;
   int best=-1;
   for (size_t i = 0; i < 9; i++) {
     if(a[i]==0){
       double k=contemplateMin(a,i);
-      cout<<i<<":"<<k<<"\n";
+      if (show) cout<<i<<":"<<k<<"\n";
       if(k>max){
         max=k;
         best=i;
       }
     }
   }
-  cout<< best << "\n\n";
+  if (show) cout<< best << "\n\n";
   return best;
 }
 
-void printBoard(vector<int> board){
+void printBoard(const vector<int>& board){
   for(int i=0;i<3;i++){
     for(int j=0;j<3;j++){
       cout<< board[i*3 + j] << "\t";
@@ -233,7 +236,7 @@ void makeMove(vector<int>& board, int playerNum, int move){
 }
 
 //copied from try 3 to find completion
-bool over(vector<int> board){
+bool over(const vector<int>& board){
   //Return value returns bool for whether or not this is an end state and a score
   //Diagonal win check
   if ((board[0]==board[8] && board[0]==board[4]) || (board[2]==board[6] && board[2]==board[4])){
@@ -263,9 +266,45 @@ bool over(vector<int> board){
   return true;
 }
 
+void demo(vector<int> a,bool againstUser){
+  printBoard(a);
+  for(int player=-1;!over(a);player=player*-1){
+    if (player==1) {
+      makeMove(a,1,best_move(a,true));
+    }else{
+      if(!againstUser){
+        makeMove(a,-1,best_move(reverseBoard(a),true));
+      }else{
+        cout<< "Pick your move (0-8):\n";
+        int move;
+        cin >> move;
+        if(a[move]==0) makeMove(a,-1,move);
+      }
+
+    }
+    printBoard(a);
+  }
+}
+
+vector<int> decodeBase3(int coded){
+  vector<int> retval;
+  for (int i = 0; i < 9; i++) {
+    retval.push_back(0);
+  }
+  for (int i = 8; i >=0; i--) {
+    int next = coded/3;
+    retval[i]= coded - (next*3) -1;
+    coded = next;
+  }
+  return retval;
+}
+
 int main(){
-  //set to play against self
-  bool againstSelf=true;
+  //Change these booleans for demos
+  //demoTime runs demo
+  bool demoTime = true;
+  //userInput decides whether demos is cpu v cpu or user v cpu
+  bool userInput = false;
   vector<int> a;
   //written out for debugging to plug in starting state
   a.push_back(0);
@@ -277,23 +316,34 @@ int main(){
   a.push_back(0);
   a.push_back(0);
   a.push_back(0);
-
-  printBoard(a);
-
-  for(int player=1;!over(a);player=player*-1){
-    if (player==1) {
-      makeMove(a,1,best_move(a));
-    }else{
-      if(againstSelf){
-        makeMove(a,-1,best_move(reverseBoard(a)));
-      }else{
-        cout<< "Pick your move (0-8):\n";
-        int move;
-        cin >> move;
-        makeMove(a,-1,move);
+  if(demoTime){
+    demo(a,userInput);
+  }else{
+    vector<pair<int,int> > codedBoards;
+    string line;
+    ifstream boardList ("nonterminalBoards.txt");
+    if (boardList.is_open()){
+      while(getline(boardList,line)){
+         codedBoards.push_back(pair<int,int>(stoi(line),0));
       }
-
+      boardList.close();
     }
-    printBoard(a);
+
+    int num=codedBoards.size();
+    cout << "Successfully read " << num << " coded boards\n";
+
+    for (int i = 0; i < num; i++) {
+      if (i%100==1) cout << i << "\n";
+      codedBoards[i].second = best_move(decodeBase3(codedBoards[i].first));
+    }
+
+    ofstream labeledOutput ("bestMoves.txt");
+    if (labeledOutput.is_open()){
+      for (int i = 0; i < num; i++) {
+        labeledOutput << codedBoards[i].first << ":" << codedBoards[i].second << "\n";
+      }
+      labeledOutput.close();
+    }
   }
+  return 0;
 }

@@ -1,3 +1,6 @@
+//FIRST TRY
+//NOT WORKING VERSION
+
 #include <iostream>
 #include <vector>
 using namespace std;
