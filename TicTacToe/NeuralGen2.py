@@ -1,14 +1,7 @@
-'''
-This code aims to create a regression model using an artificial neural network
-and gradient descent. However, for this particular problem and considering the
-dataset, a classification approach would be better. This code will be retired
-to the OldStuff folder and replaced by an SciKit learn classification model.
-'''
-
 import numpy as np
 
 boards= []
-expectedOutput= []
+move= []
 
 with open('OutputFiles/bestMoves.txt','r') as f:
     for line in f:
@@ -22,6 +15,7 @@ with open('OutputFiles/bestMoves.txt','r') as f:
             else:
                 break
         boardCode = int(''.join(b))
+        move.append(float(line[moveLocation])/10)
 
         b = []
         for k in range(9):
@@ -36,18 +30,11 @@ with open('OutputFiles/bestMoves.txt','r') as f:
             b[k] = b[k] -1
         boards.append(b)
 
-        g = []
-        for k in range(9):
-            g.append(0)
-        g[int(line[moveLocation])] =1
-        expectedOutput.append(g)
-
-
 for k in range(len(boards)):
-    print boards[k],expectedOutput[k]
+    print boards[k],move[k]
 
 X = np.array(boards)
-y = np.array(expectedOutput)
+y = np.array(move)
 
 syn=[]
 
@@ -76,18 +63,34 @@ def train(n,iter_n):
         top_delta = top_error*nonlin(l[n+1],deriv=True)
         deltas.append(top_error)
         #Deeper level error and delta
-        for k in range(n):
-            e=deltas[k].dot(syn[n-k].T)
-            errors.append(e)
-            d=e*nonlin(l[n-k],deriv=True)
-            deltas.append(d)
+        l4_error = y - l[4]
+        l4_delta = l4_error*nonlin(l[4],deriv=True)
+        print l4_delta
+        print syn[3]
+        l3_error = l4_delta.dot(syn[3].T)
+        l3_delta = l3_error*nonlin(l[3],deriv=True)
+        l2_error = l3_delta.dot(syn[2].T)
+        l2_delta = l2_error*nonlin(l[2], deriv=True)
+        l1_error = l2_delta.dot(syn[1].T)
+        l1_delta = l1_error * nonlin(l[1],deriv=True)
+
+        #for k in range(n):
+        #    e=deltas[k].dot(syn[n-k].T)
+        #    errors.append(e)
+        #    d=e*nonlin(l[n-k],deriv=True)
+        #    deltas.append(d)
 
         if(j % 100) == 0:   # Only print the error every 10000 steps, to save time and limit the amount of output.
             print j,":Error: ",str(np.mean(np.abs(top_error)))
 
         #update weights (no learning rate term)
-        for k in range(n+1):
-            syn[k] += np.transpose(l[k]).dot(deltas[n-k])/5
+        syn[3] += l[3].T.dot(l4_delta)/2
+        syn[2] += l[2].T.dot(l3_delta)/2
+        syn[1] += l[1].T.dot(l2_delta)/2
+        syn[0] += l[0].T.dot(l1_delta)/2
+
+        #for k in range(n+1):
+        #    syn[k] += np.transpose(l[k]).dot(deltas[n-k])/5
 
 
 def build(numIn,numOut,numHiddenLayers,numNeuronsHidden):
@@ -109,9 +112,9 @@ def test(n):
 
 def main():
     numInputs=9
-    numOutputs=9
-    n=5
-    k=15
+    numOutputs=1
+    n=3
+    k=9
     #print(X)
     #print(y)
     build(numInputs,numOutputs,n,k)
