@@ -2,13 +2,14 @@
 This code aims to create a regression model using an artificial neural network
 and gradient descent. However, for this particular problem and considering the
 dataset, a classification approach would be better. This code will be retired
-to the OldStuff folder and replaced by an SciKit learn classification model.
+to the OldStuff folder and replaced by an SciKit learn
 '''
 
 import numpy as np
 
 boards= []
 expectedOutput= []
+bestMoves = []
 
 with open('OutputFiles/bestMoves.txt','r') as f:
     for line in f:
@@ -29,17 +30,19 @@ with open('OutputFiles/bestMoves.txt','r') as f:
         location = 8
         while boardCode > 0:
             n = int(boardCode/3)
-            b[location]= ( boardCode - 3*n )
+            b[location]= float( boardCode - 3*n )
             boardCode = n
             location = location - 1
         for k in range(9):
             b[k] = b[k] -1
         boards.append(b)
 
+        bestMoves.append(int(line[moveLocation]))
+
         g = []
         for k in range(9):
-            g.append(0)
-        g[int(line[moveLocation])] =1
+            g.append(float(0))
+        g[int(line[moveLocation])] = (float(1))
         expectedOutput.append(g)
 
 
@@ -50,6 +53,26 @@ X = np.array(boards)
 y = np.array(expectedOutput)
 
 syn=[]
+
+def softmax(x, deriv=False):
+    if deriv==False:
+        retval = []
+        for k in x:
+            n = []
+            m = []
+            sum=0
+            for j in k:
+                n.append(np.exp(j))
+            for j in n:
+                sum = sum + j
+            print sum
+            for j in n:
+                m.append(j/sum)
+            k=m
+        print x
+        return x
+    else:
+        return x*(1-x)
 
 def nonlin(x, deriv=False):
     g = np.exp(-x)
@@ -62,10 +85,12 @@ def train(n,iter_n):
         l=[]
         l.append(X)
         g=1
-        while g<(n+2):
+        while g<(n+1):
             l.append(nonlin(np.dot(l[g-1], syn[g-1])))
             g+=1
 
+        l.append(softmax(np.dot(l[g-1], syn[g-1])))
+        print l[n+1]
         # Back propagation of errors using the chain rule.
         errors = []
         deltas = []
@@ -73,7 +98,7 @@ def train(n,iter_n):
         #Top level error and delta
         top_error = y - l[n+1]
         errors.append(top_error)
-        top_delta = top_error*nonlin(l[n+1],deriv=True)
+        top_delta = top_error*softmax(l[n+1],deriv=True)
         deltas.append(top_error)
         #Deeper level error and delta
         for k in range(n):
@@ -82,7 +107,7 @@ def train(n,iter_n):
             d=e*nonlin(l[n-k],deriv=True)
             deltas.append(d)
 
-        if(j % 100) == 0:   # Only print the error every 10000 steps, to save time and limit the amount of output.
+        if(j % 1) == 0:   # Only print the error every 10000 steps, to save time and limit the amount of output.
             print j,":Error: ",str(np.mean(np.abs(top_error)))
 
         #update weights (no learning rate term)
@@ -111,7 +136,7 @@ def main():
     numInputs=9
     numOutputs=9
     n=5
-    k=15
+    k=20
     #print(X)
     #print(y)
     build(numInputs,numOutputs,n,k)
