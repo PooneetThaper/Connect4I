@@ -36,8 +36,12 @@ for k in range(len(boards)):
     print boards[k],move[k]
 '''
 
-clf = svm.SVC()
+clf = svm.SVC(C=100000000000)
 clf = clf.fit(boards,move)
-print (clf.predict([1,1,0,-1,-1,0,0,0,0]))
+
+pred = clf.predict(boards)
+from sklearn.metrics import accuracy_score
+acc = float(accuracy_score(pred, move))
+print acc
 
 joblib.dump(clf, 'SVM.pkl')
