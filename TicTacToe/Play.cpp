@@ -323,7 +323,7 @@ void demo(vector<int> a,bool againstUser,bool minimax=true){
 int main(){
   //Change these booleans for demos
   //userInput decides whether demos is cpu v cpu or user v cpu
-  bool userInput = false;
+  bool userInput = true;
   //play against live minimax evaluation or pretrained svm
   bool minimax = false;
   vector<int> a;
