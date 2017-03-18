@@ -15,5 +15,5 @@ for i in input:
     board.append(int(i)-1)
 
 b = np.array(board)
-
+b = b.reshape(1,-1)
 print clf.predict(b)[0]
