@@ -16,4 +16,4 @@ for i in input:
 
 b = np.array(board)
 b = b.reshape(1,-1)
-print clf.predict(b)[0]
+print(clf.predict(b)[0])

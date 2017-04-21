@@ -28,14 +28,23 @@ int svm(const char* cmd) {
     return x;
 }
 
+int dot(const int*& a, const int*& b, int length){
+  int sum = 0;
+  while(length>0){
+    sum += a[length-1][length-1];
+  }
+  return sum;
+}
+
+
 int win(const vector<int>& board){
-    int wins[8][3] = {{0,1,2},{3,4,5},{6,7,8},{0,3,6},
-                      {1,4,7},{2,5,8},{0,4,8},{2,4,6}};
-    for(int i = 0; i < 8; ++i) {
-        if(board[wins[i][0]] != 0 &&
-           board[wins[i][0]] == board[wins[i][1]] &&
-           board[wins[i][0]] == board[wins[i][2]])
-            return board[wins[i][2]];
+    int wins[2][4][4] = {{{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}}
+                      {{0,0,0,1},{0,0,1,0},{0,1,0,0},{1,0,0,0}}};
+    for(int i = 0; i < 2; i++) {
+      for (int j = 0; j < 4; j++) {
+        int*
+        dot(wins[i][j],)
+      }
     }
     return 0;
 }
@@ -116,8 +125,8 @@ char getChar(int i){
 }
 
 void printBoard(const vector<int>& board){
-  for(int i=0;i<3;i++){
-    for(int j=0;j<3;j++){
+  for(int i=0;i < 6;i++){
+    for(int j=0;j < 7;j++){
       cout<< getChar(board[i*3 + j]) << "\t";
     }
     cout<<"\n\n";
@@ -163,15 +172,9 @@ int main(){
   bool minimax = true;
   vector<int> a;
   //written out for debugging to plug in starting state
-  a.push_back(0);
-  a.push_back(0);
-  a.push_back(0);
-  a.push_back(0);
-  a.push_back(0);
-  a.push_back(0);
-  a.push_back(0);
-  a.push_back(0);
-  a.push_back(0);
+  for (int i = 0; i < 42; i++) {
+    a.push_back(0);
+  }
   demo(a,userInput,minimax);
 
   return 0;
