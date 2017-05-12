@@ -135,13 +135,13 @@ bool over(const vector<int>& board){
     return true;
 }
 
-int minimax(vector<int>& board, int player, int depth = 0) {
+int minimax(vector<int>& board, int player, int depth = 0, bool show = false) {
     int winner = win(board);
     if(winner != 0) {
-      cout << depth << ", " << player << " wins here\n";
+      if (show) cout << depth << ", " << player << " wins here\n";
       return winner*player;
     }
-    if(over(board)){
+    if(show && over(board)){
       cout << depth << ",DRAW HERE\n";
       printBoard(board);
     }
@@ -150,7 +150,7 @@ int minimax(vector<int>& board, int player, int depth = 0) {
     int score = -2;
     for(int i = 0; i < 7; i++) {
         if(board[i] == 0) {
-            cout << depth << ", " << player<< " is currently exploring: " << i << "\n";
+            if (show) cout << depth << ", " << player<< " is currently exploring: " << i << "\n";
             makeMove(board,player,i);
             int thisScore = -minimax(board, player*-1, depth+1);
             if(thisScore > score) {
