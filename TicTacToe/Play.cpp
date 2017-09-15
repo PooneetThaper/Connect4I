@@ -86,7 +86,7 @@ int best_move(vector<int> a, bool mini){
           }
       }
     }
-    if (show) cout<< move << "\n\n";
+    if (show) cout<< "Computer's move:\t" << move << "\n\n";
     return move;
   }else{
     string input;
@@ -94,7 +94,7 @@ int best_move(vector<int> a, bool mini){
       input.append(to_string(a[i]+1));
     }
 
-    string command= "python playSVM.py '"+input+"'";
+    string command= "python SVM/playSVM.py '"+input+"'";
     cout << command << "\n";
     char cmd[32];
     for (size_t i = 0; i < 32; i++) {
@@ -144,7 +144,7 @@ void demo(vector<int> a,bool againstUser,bool m=true){
       if(!againstUser){
         makeMove(a,-1,best_move(reverseBoard(a),m));
       }else{
-        cout<< "Pick your move (0-8):\n";
+        cout<< "Pick your move (0-8):\t";
         int move;
         cin >> move;
         if(a[move]==0) makeMove(a,-1,move);

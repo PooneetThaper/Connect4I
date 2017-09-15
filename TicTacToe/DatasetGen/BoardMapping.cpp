@@ -1,3 +1,4 @@
+// This file aims to traverse the game tree of TicTacToe in order to extract and label all possible gamestates as either terminating or non-terminating states in order to allow other portions of this project to use that data and limit their efforts in finding the best moves only for non-terminating boards.
 #include <iostream>
 #include <utility>
 #include <vector>
