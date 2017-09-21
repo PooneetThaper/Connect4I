@@ -12,6 +12,7 @@ class TicTacToe:
         self.current_player = 1
         self.over = False
         self.winner = 0
+        self.num_failed_tries = 0
         self.history = []
 
     def is_over(self, last_move):
@@ -22,7 +23,13 @@ class TicTacToe:
                     self.over = True
                     self.winner = self.board[w[0]]
                     return True
-        return not 0 in self.board
+        if (self.num_failed_tries > 20):
+            self.over = True
+            return True
+        if not 0 in self.board:
+            self.over = True
+            return True
+        return False
 
     # Show state functions
     def print_board(self):
@@ -52,7 +59,8 @@ class TicTacToe:
 
     # Modifier functions
     def make_move(self, position):
-        if (self.over) or self.board[position] != 0:
+        if (self.over) or position>8 or self.board[position] != 0:
+            self.num_failed_tries += 1
             return -1
         # Creating record of state and action taken
         record = (np.copy(self.board), self.current_player, position)
@@ -65,23 +73,30 @@ class TicTacToe:
 
         return int(self.over)
 
-    def update(self, position):
+    def step(self, position):
         reward = self.make_move(position)
+        if (self.over and self.winner!=0):
+            reward *= 100
         # Return in OpenAI Gym Style
-        # (state, reward, done, info)
-        return (self.board, reward, self.over, self.history)
+        # Returned value: (state, reward, done, info)
+        # print(self.history[len(self.history)-1])
+        return (self.get_current_view(), reward, self.over, self.history)
 
     # Reset functions
-    def reset_game(self):
+    def reset(self):
         self.board = np.zeros(9)
         self.current_player = 1
         self.over = False
+        self.winner = 0
+        self.num_failed_tries = 0
         self.history = []
+        return self.board
 
 
-
+'''
 if __name__ == "__main__":
     game = TicTacToe()
     while not game.get_over():
-        print(game.update(np.random.randint(9))[0:3])
+        print(game.step(np.random.randint(9))[0:3])
     game.print_history()
+'''
