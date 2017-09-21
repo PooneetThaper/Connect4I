@@ -9,10 +9,6 @@
 #include <sstream>
 using namespace std;
 
-double winAnalysis(const vector<int>& board,const int& move);
-double contemplateMax(vector<int> board,const int& move);
-double contemplateMin(vector<int> board,const int& move);
-
 int svm(const char* cmd) {
     char buffer[128];
     string result = "";
